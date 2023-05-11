@@ -1,4 +1,4 @@
-#zadanie 4.1
+#zadanie 5
 def add(a:float,b:float)->float:
     return a+b
 def od(a:float,b:float)->float:
