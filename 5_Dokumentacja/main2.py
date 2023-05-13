@@ -2,7 +2,7 @@
 def add(a:float,b:float)->float:
     """Dodaje dwie liczby do siebie """
     return a+b
-def od(a:float,b:float)->float:
+def sub(a:float,b:float)->float:
     """Odejmuje drugą liczbę od pierwszej"""
     return a-b
 def mul(a:float,b:float)->float:
