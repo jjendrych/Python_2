@@ -1,33 +1,44 @@
-#zadanie 4.1
-def add(a:float,b:float)->float:
+#zadanie 5.1
+def add(a,b):
+    """Dodaje liczbę pierwszą do drugiej"""
     return a+b
-def od(a:float,b:float)->float:
+def sub(a,b):
+    """Odejmuje drugą liczbe od drugiej"""
     return a-b
-def mul(a:float,b:float)->float:
+def mul(a,b):
+    """Mnoży pierwszą liczbę przez drugą"""
     return a*b
-def div(a:float,b:float)->float:
+def div(a,b):
+    """Dzieli pierwszą liczbę przez drugą"""
     if b == 0:
-        print("operacja niemożliwa")
+        print("Operacja niemożliwa, nie można dzielić przez 0")
     else:
         return a/b
     
 
 while True:
-    choice=input("Wybierz działanie, które chcesz wykonać wpisując +, -, * lub /. Wpisz 0 aby zakończyć obliczenia:")
-    if choice == "0":
+    print()
+    print("Menu kalkulatora:")
+    print("1.Dodawanie")
+    print("2.Odejmowanie")
+    print("3.Mnożenie")
+    print("4.Dzielenie")
+    print("5.Wyjście z kalkulatora")
+    choice=input("Wybierz działanie, które chcesz wykonać wpisując odpowiednią liczbę:")
+    if choice == "5":
         break
     
-    if choice not in ["+","-","*","/"]:
+    if choice not in ["1","2","3","4"]:
         print("nie ma takiej operacji")
         continue
     
     a=float(input("Podaj pierwszą liczbę:"))
     b=float(input("Podaj drugą liczbę:"))
-    if choice == "+":
+    if choice == "1":
         print("=",add(a,b)) 
-    elif choice == "-":
-        print("=",od(a,b))
-    elif choice == "*":
+    elif choice == "2":
+        print("=",sub(a,b))
+    elif choice == "3":
         print("=",mul(a,b))
-    elif choice == "/":
+    elif choice == "4":
         print("=",div(a,b))

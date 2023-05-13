@@ -1,11 +1,15 @@
-#zadanie 4
-def add(a,b):
+#zadanie 5.2
+def add(a:float,b:float)->float:
+    """Dodaje liczbę pierwszą do drugiej"""
     return a+b
-def sub(a,b):
+def sub(a:float,b:float)->float:
+    """Odejmuje drugą liczbe od drugiej"""
     return a-b
-def mul(a,b):
+def mul(a:float,b:float)->float:
+    """Mnoży pierwszą liczbę przez drugą"""
     return a*b
-def div(a,b):
+def div(a:float,b:float)->float:
+    """Dzieli pierwszą liczbę przez drugą"""
     if b == 0:
         print("Operacja niemożliwa, nie można dzielić przez 0")
     else:
