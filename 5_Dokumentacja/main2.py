@@ -1,19 +1,20 @@
-#zadanie 5.1
-def add(a,b):
+#zadanie 5.2
+def add(a:float,b:float)->float:
     """Dodaje dwie liczby do siebie """
     return a+b
-def sub(a,b):
+def od(a:float,b:float)->float:
     """Odejmuje drugą liczbę od pierwszej"""
     return a-b
-def mul(a,b):
+def mul(a:float,b:float)->float:
     """Mnoży pierwszą liczbę przez drugą"""
     return a*b
-def div(a,b):
+def div(a:float,b:float)->float:
     """Dzieli pierwszą liczbę przez drugą"""
     if b == 0:
         print("operacja niemożliwa")
     else:
         return a/b
+    
 
 while True:
     print()
