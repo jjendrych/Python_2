@@ -1,7 +1,7 @@
 import json
 import os
-
-class ToDoList:
+"""Klasa trzymająca wszelkie metody związane z plikiem json"""
+class jsonOperations():
     def __init__(self) -> None:
         self.data = self.showJson()
         
@@ -18,25 +18,15 @@ class ToDoList:
                 return data
         else:
             return []
-
-    def menu(self) -> str:
-        """Wyświetlenie uzytkownikowi dostępnych opcji w todo liście"""
-        print("\nMenu:")
-        print("1.Dodaj zadanie")
-        print("2.Usuń zadanie")
-        print("3.Aktualizuj zadanie")
-        print("4.Zapisz plik z zadaniami")
-        print("5.Wyświetl wszystkie zadania")
-        print("0.Wyjście z todo list")
-        choice = input("Wybierz opcję:")
-        return choice
-
+        
+"""Klasa ma metody odpowiadające wszystkim podstawowym elementom programu todo listy jak dodanie zadania, usunięcie lub zmodyfikowanie go"""        
+class generalOperations(jsonOperations):
     def showTasks(self):
         """Funkcja wyświetlająca zapisane zadania"""
         if not self.data:
             print("Lista todo jest pusta.")
         else:
-            print("Zadania:")
+            print("\nZadania:")
             for task in self.data:
                 print(f"ID: {task['id']}")
                 print(f"Tytuł zadania: {task['title']}")
@@ -53,12 +43,17 @@ class ToDoList:
         else:
             """Możliwość wyboru istnienia opisu zadania"""
             desc=input("Czy chcesz dodać opis zadania? (wpisz tak lub nie): ")
-            if desc == ['Tak','tak', 't', 'T']:
+            if desc in ['Tak','tak', 't','T']:
                 description = input("Opisz zadanie do wykonania:")
             else:
                 description=None
                 
-            task_deadline = self.deadline()
+            print("Wprowadź dane dotyczące daty wykonania zadania:")
+            day = input("Dzień: ")
+            month = input("Miesiąc: ")
+            year = input("Rok: ")
+            task_deadline = f"{day}-{month}-{year}"
+            
             if self.data:
                 last_id = self.data[-1]['id']
                 new_id = last_id + 1
@@ -78,27 +73,22 @@ class ToDoList:
             print("Zadanie zostało dodane!")
                 
     def deadline(self) -> str:
-        """Funkcja umożliwiająca użytkownikowi na wprowadzenie daty zadania"""
-        while True:
-            print("Wprowadź dane dotyczące daty wykonania zadania:")
-            day = input("Dzień: ")
-            month = input("Miesiąc: ")
-            year = input("Rok: ")
+        """Funkcja umożliwiająca użytkownikowi wprowadzenie daty zadania"""
+        print("Wprowadź dane dotyczące daty wykonania zadania:")
 
-            if not day.isdigit() or not month.isdigit() or not year.isdigit():
-                print("Zostały wprowadzone nieprawidłowe dane. Proszę wprowadzić liczby")
-                continue
+        day = input("Dzień: ")
+        month = input("Miesiąc: ")
+        year = input("Rok: ")
 
-            day = int(day)
-            month = int(month)
-            year = int(year)
+        if day.isdigit() and month.isdigit() and year.isdigit() and 1 <= int(day) <= 31 and 1 <= int(month) <= 12:
+            task_deadline = f"{int(day)}-{int(month)}-{int(year)}"
+            return task_deadline
 
-            if not (1 <= day <= 31) or not (1 <= month <= 12):
-                print("Zostały wprowadzone nieprawidłowe dane. Proszę wprowadzić dzień wykonania zadania jako liczba 1-31 oraz miesiąc 1-12")
-                continue
+        print("Wprowadzono nieprawidłowe dane. Proszę spróbować ponownie.")
             
     def deleteTask(self):
         """Funkcja usuwająca zadanie"""
+        self.showTasks()
         remove_this_id = int(input("Podaj numer zadania, które chcesz usunąć: "))
         for task in self.data:
             if task['id'] == remove_this_id:
@@ -110,9 +100,10 @@ class ToDoList:
         
     def modifyTask(self):
         """Funckja modyfikująca dane wybranego zadania. Dane zadania są zamieniane na te wprowadzone przez użytkownika"""
-        if not self.datadata:
+        if not self.data:
             print("Nie masz żadnych zadań do edycji.")
         else:
+            self.showTasks()
             modify_this_id=int(input("Podaj numer zadania, które chcesz edytować: "))
             for task in self.data:
                 if task['id'] == modify_this_id:
@@ -121,50 +112,92 @@ class ToDoList:
                     if 'description' in  task:
                         print("2. Opis zadania")
                         print("3. Data wykonania zadania")
+                        choice = input("Którą daną zadania chcesz edytować?: ")
+
+                        if choice == "1":
+                            new_title = input("Podaj nowy tytuł zadania: ")
+                            task['title'] = new_title
+                            save = input("Czy chcesz aby zmiana zostały zapisana? (wpisz tak lub nie): ")
+                            """Upewnienie się czy użytkownik na pewno chce zapisać zmiany zadania"""
+                            if save in ['tak', 'Tak', 't','T']:
+                                self.saveToJson()
+                                print(f"Tytuł zadania {modify_this_id} został zaaktualizowany. Nowy opis to: {new_title}")
+                                return
+                            else:
+                                print("Zmiany nie zostały zapisane!")
+                                return
+
+                        elif choice == "2" and 'description' in task:
+                            new_description = input("Podaj nowy opis zadania: ")
+                            task['description'] = new_description
+                            save = input("Czy chcesz aby zmiana zostały zapisana? (wpisz tak lub nie): ")
+                            """Upewnienie się czy użytkownik na pewno chce zapisać zmiany zadania"""
+                            if save in ['tak', 'Tak', 't','T']:
+                                self.saveToJson()
+                                print(f"Opis zadania {modify_this_id} został zaaktualizowany. Nowy opis to: {new_description}")
+                                return
+                            else:
+                                print("Zmiany nie zostały zapisane!")
+                                return
+
+                        elif choice == "3":
+                            new_deadline = self.deadline()
+                            task['task_deadline'] = new_deadline
+                            save = input("Czy chcesz aby zmiana zostały zapisana? (wpisz tak lub nie): ")
+                            """Upewnienie się czy użytkownik na pewno chce zapisać zmiany zadania"""
+                            if save in ['tak', 'Tak', 't','T']:
+                                self.saveToJson()
+                                print(f"Data zadania {modify_this_id} została zaaktualizowana. Nowy opis to: {new_deadline}")
+                                return
+                            else:
+                                print("Zmiany nie zostały zapisane!")
+                                return
+                    
                     else:
-                        print("2.Data")
-                    choice = input("Którą daną zadania chcesz edytować?: ")
+                        print("2. Data")
+                        choice = input("Którą daną zadania chcesz edytować?: ")
 
-                    if choice == "1":
-                        new_title = input("Podaj nowy tytuł zadania: ")
-                        task['title'] = new_title
-                        save = input("Czy chcesz aby zmiana zostały zapisana? (wpisz tak lub nie): ")
-                        """Upewnienie się czy użytkownik na pewno chce zapisać zmiany zadania"""
-                        if save == ['tak', 'Tak', 't','T']:
-                            self.saveToJson()
-                            print(f"Tytuł zadania {modify_this_id} został zaaktualizowany. Nowy opis to: {new_title}")
-                            return
-                        else:
-                            print("Zmiany nie zostały zapisane!")
-                            return
+                        if choice == "1":
+                            new_title = input("Podaj nowy tytuł zadania: ")
+                            task['title'] = new_title
+                            save = input("Czy chcesz aby zmiana zostały zapisana? (wpisz tak lub nie): ")
+                            """Upewnienie się czy użytkownik na pewno chce zapisać zmiany zadania"""
+                            if save in ['tak', 'Tak', 't','T']:
+                                self.saveToJson()
+                                print(f"Tytuł zadania {modify_this_id} został zaaktualizowany. Nowy opis to: {new_title}")
+                                return
+                            else:
+                                print("Zmiany nie zostały zapisane!")
+                                return
 
-                    elif choice == "2" and 'description' in task:
-                        new_description = input("Podaj nowy opis zadania: ")
-                        task['description'] = new_description
-                        save = input("Czy chcesz aby zmiana zostały zapisana? (wpisz tak lub nie): ")
-                        """Upewnienie się czy użytkownik na pewno chce zapisać zmiany zadania"""
-                        if save == ['tak', 'Tak', 't','T']:
-                            self.saveToJson()
-                            print(f"Opis zadania {modify_this_id} został zaaktualizowany. Nowy opis to: {new_description}")
-                            return
-                        else:
-                            print("Zmiany nie zostały zapisane!")
-                            return
-
-                    elif choice == "3":
-                        new_deadline = self.deadline()
-                        task['task_deadline'] = new_deadline
-                        save = input("Czy chcesz aby zmiana zostały zapisana? (wpisz tak lub nie): ")
-                        """Upewnienie się czy użytkownik na pewno chce zapisać zmiany zadania"""
-                        if save == ['tak', 'Tak', 't','T']:
-                            self.saveToJson()
-                            print(f"Data zadania {modify_this_id} została zaaktualizowana. Nowy opis to: {new_deadline}")
-                            return
-                        else:
-                            print("Zmiany nie zostały zapisane!")
-                            return
+                        elif choice == "2":
+                            new_deadline = self.deadline()
+                            task['task_deadline'] = new_deadline
+                            save = input("Czy chcesz aby zmiana zostały zapisana? (wpisz tak lub nie): ")
+                            """Upewnienie się czy użytkownik na pewno chce zapisać zmiany zadania"""
+                            if save in ['tak', 'Tak', 't','T']:
+                                self.saveToJson()
+                                print(f"Data zadania {modify_this_id} została zaaktualizowana. Nowy opis to: {new_deadline}")
+                                return
+                            else:
+                                print("Zmiany nie zostały zapisane!")
+                                return
 
             print("Nie znaleziono zadania o podanym ID.")
+    
+"""Klasa pozwalająca podjęcie na podjęcie działań, które użytkownik sam wybierze z menu"""
+class ToDoList(generalOperations):
+    def menu(self) -> str:
+        """Wyświetlenie uzytkownikowi dostępnych opcji w todo liście"""
+        print("\nMenu:")
+        print("1.Dodaj zadanie")
+        print("2.Usuń zadanie")
+        print("3.Aktualizuj zadanie")
+        print("4.Zapisz plik z zadaniami")
+        print("5.Wyświetl wszystkie zadania")
+        print("0.Wyjście z todo list")
+        choice = input("Wybierz opcję:")
+        return choice
             
     def main(self):
         self.showTasks()
@@ -186,6 +219,7 @@ class ToDoList:
 
             elif choice == "4":
                 self.saveToJson()
+                print("Zadania zostały zapisane!")
             
             elif choice == "5":
                 self.showTasks()
